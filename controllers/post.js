@@ -129,8 +129,10 @@ const updatePost = async (req, res) => {
     let post = await postsModel.getPost(post_id)
   
     if((user_id && post.length) && user_id === post[0].user_id) {
+        
         title = title ? title : post[0].title
         description = description ? description : post[0].description
+
         let updatedPost = await postsModel.updatePost(post_id, title, description)
     
         if( updatedPost.length ) {

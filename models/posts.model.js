@@ -3,16 +3,11 @@ const model = require('../middleware/postgres')
 let GET = `
     SELECT
         p.post_id,
-        u.username,
+        u.username AS user,
         p.title,
         p.description
     FROM posts AS p
-    JOIN users AS u ON u.user_id = p.user_id
-    GROUP BY 
-        p.post_id, 
-        u.username,
-        p.title,
-        p.description
+    NATURAL JOIN users AS u 
     ORDER BY p.post_id;
 `
 
@@ -36,11 +31,10 @@ let BY_USER_ID = `
         p.description
     FROM posts AS p
     NATURAL JOIN users AS u
-    WHERE p.user_id = $1
-    ;
+    WHERE p.user_id = $1;
 `
 
-let POST = `
+let CREATE = `
     INSERT INTO posts (title, description, user_id) VALUES 
     ($1, $2, $3)
     RETURNING *;
@@ -54,7 +48,8 @@ let DELETE = `
 
 let UPDATE = `
     UPDATE posts
-    SET post_text = $2
+        SET title = $2
+        SET description = $3
     WHERE post_id = $1
     RETURNING *;
 `
@@ -68,15 +63,15 @@ const getPost = (post_id) => {
 }
 
 const createPost = (title, description, user_id) => {
-    return model(POST, title, description, user_id)
+    return model(CREATE, title, description, user_id)
 }
 
 const deletePost = (post_id) => {
     return model(DELETE, post_id)
 }
 
-const updatePost = (post_id, post_text) => {
-    return model(UPDATE, post_id, post_text)
+const updatePost = (post_id, title, description) => {
+    return model(UPDATE, post_id, title, description)
 }
 
 const byUserId = (user_id) => {

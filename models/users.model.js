@@ -17,6 +17,13 @@ let ONE = `
     WHERE user_id = $1;
 `
 
+let SEARCH = `
+    SELECT
+        *
+    FROM users
+    WHERE username ILIKE '%' || $1 ||'%';
+`
+
 let CREATE = `
     INSERT INTO users (username, password, email) VALUES 
     ($1, crypt($2, gen_salt('bf')), $3)
@@ -44,6 +51,10 @@ const getUser = (user_id) => {
     return model(ONE, user_id)
 }
 
+const getUsersBySearch = (username) => {
+    return model(SEARCH, username)
+}
+
 const createUser = (username, password, email) => {
     return model(CREATE, username, password, email)
 }
@@ -59,6 +70,7 @@ const updateUser = (user_id, username) => {
 module.exports = {
     getUsers,
     getUser,
+    getUsersBySearch,
     createUser,
     deleteUser,
     updateUser

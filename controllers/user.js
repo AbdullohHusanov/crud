@@ -5,16 +5,33 @@ const usersModel = require('../models/users.model')
 const getUsers = async (req, res) => {
     let users = await usersModel.getUsers()
     
-    if(users.length) {
-        res.json({
-        data: users
-        })
+    if (req.query.search) {
+        let users = await usersModel.getUsersBySearch(req.query.search)
+        
+        if (users.length) {
+            res.json({
+                data: users
+            })    
+        } else {
+            res.status(404).json({
+                status: 404,
+                message: 'not fount'
+            })    
+        }
     } else {
-        res.status(404).json({
-            status: 404,
-            message: 'not fount'
-        })
+        
+        if(users.length) {
+            res.json({
+                data: users
+            })
+        } else {
+            res.status(404).json({
+                status: 404,
+                message: 'not fount'
+            })
+        }
     }
+
 }
 
 const getUser = async (req, res) => {
@@ -46,8 +63,7 @@ const createUser = async (req, res) => {
     res.status(201).json({
         message: 'User succesfully created',
         data: username,
-        token: userToken,
-        email: email
+        token: userToken
     })
 }
 
@@ -84,6 +100,7 @@ const updateUser = async (req, res) => {
     let user = await usersModel.getUser(userId)
     
     if((user.length && user_id) && userId == user_id) {
+
         username = username ? username : user[0].username
         password = password ? password : user[0].password
         email = email ? email : user[0].email
