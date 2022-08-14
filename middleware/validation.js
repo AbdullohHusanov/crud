@@ -84,6 +84,7 @@ const CommentValidator = joi.object({
 })
 
 const CommentValidator4Update = joi.object({
+    post_id: joi.number().required(),
     comment_text: joi.string().min(5).max(64)
 })
 

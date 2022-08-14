@@ -59,7 +59,8 @@ let DELETE = `
 
 let UPDATE = `
     UPDATE comments
-    SET comment_text = $2
+        SET post_id = $2
+        SET comment_text = $3
     WHERE comment_id = $1
     RETURNING *;
 `
@@ -89,7 +90,7 @@ const deleteComment = (comment_id) => {
 }
 
 const updateComment = (comment_id, comment_text) => {
-    return model(UPDATE, post_id, comment_id, comment_text)
+    return model(UPDATE, comment_id, post_id, comment_text)
 }
 
 module.exports = {

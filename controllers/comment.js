@@ -103,7 +103,7 @@ const deleteComment = async (req, res) => {
 
 const updateComment = async (req, res) => {
     let { comment_id } = req.params
-    let { comment_text } = req.body
+    let { post_id, comment_text } = req.body
 
     let { token } = req.headers
 
@@ -111,8 +111,9 @@ const updateComment = async (req, res) => {
     let comment = await commentsModel.getComment(comment_id)
 
     if((user_id && comment.length) && user_id == comment[0].user_id) {
-
-        let updatedComment = await commentsModel.updateComment(comment_id, comment_text)
+        post_id = post_id ? post_id : comment[0].post_id
+        comment_text = comment_text ? comment_text : comment[0].comment_text
+        let updatedComment = await commentsModel.updateComment(comment_id, post_id, comment_text)
     
         if( updatedComment.length ) {
             

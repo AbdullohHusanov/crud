@@ -6,6 +6,6 @@ route.get('/', controller.getUsers)
 route.get('/:user_id', controller.getUser)
 route.post('/', validation.Trim, validation.UserValidation, controller.createUser)
 route.delete('/:userId', validation.CheckToken, controller.deleteUser)
-route.put('/:userId', validation.CheckToken, validation.Trim, controller.updateUser)
+route.put('/:userId', validation.CheckToken, validation.Trim, validation.UserValidation4Update, controller.updateUser)
 
 module.exports = route
