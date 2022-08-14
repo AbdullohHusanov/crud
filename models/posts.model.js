@@ -32,12 +32,14 @@ let ONE = `
 
 let BY_USER_ID = `
     SELECT 
-        p.*,
-        ARRAY_AGG (c.comment_text) AS comments
+        p.post_id,
+        u.username,
+        p.title,
+        p.description
     FROM posts AS p
-    JOIN comments AS c ON p.post_id = c.post_id
-    WHERE p.user_id = 1
-    GROUP BY p.post_id;
+    NATURAL JOIN users AS u
+    WHERE p.user_id = $1
+    ;
 `
 
 let POST = `

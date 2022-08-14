@@ -14,23 +14,29 @@ const getUser = async (req, res) => {
     let { user_id } = req.params
     let user = await usersModel.getUser(user_id)
     
-    if (post) {
+    if (user.length) {
         res.json({
             data: user
+        })
+    } else {
+        res.status(404).json({
+            status: 404,
+            message: 'not found'
         })
     }
 }
 
 const createUser = async (req, res) => {
     let { username, password, email } = req.body
-    
+    console.log('sdfgsdf');
     let newUser = await usersModel.createUser(username, password, email)
 
     let userToken = jwt.sign({
             username: username, 
             user_id: newUser[0].user_id
         }, process.env.SECRET_KEY_4JWT)
-    res.json({
+
+    res.status(201).json({
         message: 'User succesfully created',
         data: username,
         token: userToken,

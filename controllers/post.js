@@ -32,9 +32,14 @@ const getPost = async (req, res) => {
     let { post_id } = req.params
     let post = await postsModel.getPost(post_id)
     
-    if (post) {
+    if (post.length) {
         res.json({
             data: post
+        })
+    } else {
+        res.status(404).json({
+            status: 404,
+            message: 'not found'
         })
     }
 }
@@ -127,7 +132,6 @@ const updatePost = async (req, res) => {
 module.exports = {
     getPost,
     getPosts,
-    // getPostsByUserId,
     createPost,
     deletePost,
     updatePost

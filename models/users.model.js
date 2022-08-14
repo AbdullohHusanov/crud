@@ -2,13 +2,17 @@ const model = require('../middleware/postgres')
 
 let GET = `
     SELECT
-    *
+        user_id,
+        username,
+        email
     FROM users;
 `
 
 let ONE = `
     SELECT 
-    *
+        user_id,
+        username,
+        email
     FROM users
     WHERE user_id = $1;
 `
