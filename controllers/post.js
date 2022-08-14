@@ -1,14 +1,24 @@
 const jwt = require('jsonwebtoken')
 const postsModel = require('../models/posts.model')
 const usersModel = require('../models/users.model')
+const commentsModel = require('../models/comments.model')
 require('dotenv').config()
+
+const c2p = async (posts) => {
+    for(let post of posts) {
+        let comments = await commentsModel.getCommentsByPostId(post.post_id)
+        post.comments = comments
+    }
+    return posts
+}
 
 const getPosts = async (req, res) => {
 
     if (req.query.user_id) {
         let posts = await postsModel.byUserId(req.query.user_id)
- 
+        
         if( posts.length ) {
+            posts = await c2p(posts)
             res.status(201).json({
                 data: posts
             })
@@ -21,9 +31,17 @@ const getPosts = async (req, res) => {
     } else {
         let posts = await postsModel.getPosts()
     
-        res.json({
-            data: posts
-        })
+        if(posts.length ) {
+            posts = await c2p(posts)
+            res.json({
+                data: posts
+            })
+        } else { 
+            res.json({
+                status: 404,
+                message: 'not found'
+            })
+        }
     }
 
 }
@@ -33,6 +51,7 @@ const getPost = async (req, res) => {
     let post = await postsModel.getPost(post_id)
     
     if (post.length) {
+        post = await c2p(post)
         res.json({
             data: post
         })

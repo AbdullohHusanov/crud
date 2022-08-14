@@ -4,10 +4,17 @@ const usersModel = require('../models/users.model')
 
 const getUsers = async (req, res) => {
     let users = await usersModel.getUsers()
-
-    res.json({
+    
+    if(users.length) {
+        res.json({
         data: users
-    })
+        })
+    } else {
+        res.status(404).json({
+            status: 404,
+            message: 'not fount'
+        })
+    }
 }
 
 const getUser = async (req, res) => {

@@ -5,11 +5,9 @@ let GET = `
         p.post_id,
         u.username,
         p.title,
-        p.description,
-        ARRAY_AGG (c.comment_text) AS comments
+        p.description
     FROM posts AS p
     JOIN users AS u ON u.user_id = p.user_id
-    JOIN comments AS c ON c.post_id = p.post_id
     GROUP BY 
         p.post_id, 
         u.username,

@@ -13,24 +13,31 @@ let GET = `
 
 let BY_POST_ID = `
     SELECT
-    *
-    FROM comments
-    WHERE post_id = $1;
+        c.comment_id,
+        u.username AS user,
+        c.comment_text AS text
+    FROM comments AS c
+    NATURAL JOIN users AS u
+    WHERE c.post_id = $1;
 `
 
 let BY_USER_ID = `
     SELECT
-    *
-    FROM comments
-    WHERE user_id = $1;
+        c.comment_id,
+        p.title,
+        u.username,
+        c.comment_text
+    FROM comments AS c
+    JOIN posts AS p ON c.post_id = p.post_id
+    JOIN users AS u ON c.user_id = u.user_id
+    WHERE c.user_id = $1;
 `
 
 let ONE = `
     SELECT
         c.comment_id,
         u.username,
-        u.user_id,
-        p.title,
+        p.title AS post,
         c.comment_text
     FROM comments AS c
     JOIN posts AS p ON c.post_id = p.post_id 
