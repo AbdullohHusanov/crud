@@ -48,8 +48,8 @@ let DELETE = `
 
 let UPDATE = `
     UPDATE posts
-        SET title = $2
-        SET description = $3
+        SET title = $2,
+            description = $3
     WHERE post_id = $1
     RETURNING *;
 `

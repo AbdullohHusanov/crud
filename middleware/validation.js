@@ -3,22 +3,33 @@ const jwt = require('jsonwebtoken')
 const joi = require('joi')
 
 const Trim = (req, res, next) => {
-    if(req.body.title && req.body.description) {
-        req.body.title = req.body.title.trim()
-        req.body.description = req.body.description.trim()
+    let {
+        title, 
+        description, 
+        username, 
+        password, 
+        email, 
+        comment_text
+        } = req.body
 
-        return next()
-    } 
-    else if (req.body.username && req.body.password && req.body.email) {
-        req.body.username = req.body.username.trim()
-        req.body.password = req.body.password.trim()
-        req.body.email = req.body.email.trim()
-
-        return next()
-    }
-    else if (req.body.comment_text) {
-        req.body.comment_text = req.body.comment_text.trim()
-        return next()
+    if (
+        title || 
+        description || 
+        username || 
+        password || 
+        email || 
+        comment_text
+        ) {
+            title = title ? title.trim() : undefined
+            description = description ? description.trim() : undefined
+            
+            username = username ? username.trim() : undefined
+            password = password ? password.trim() : undefined
+            email = email ? email.trim() : undefined
+            
+            comment_text = comment_text ? comment_text.trim() : undefined
+        
+            return next()
     } else {
         res.status(400).json({
             message: 'data not found please write something '
@@ -58,12 +69,6 @@ const UserValidator = joi.object({
     email: joi.string().min(3).max(30).pattern(new RegExp(/[a-z0-9]+@[a-z]+\.[a-z]{2,3}/)).required()
 })
 
-const UserValidator4Update = joi.object({
-    username: joi.string().min(3).max(15).alphanum(),
-    password: joi.string().min(6).max(18).pattern(new RegExp(/(?=.*[a-z]+)(?=.*[0-9]+)/)),
-    email: joi.string().min(3).max(30).pattern(new RegExp(/[a-z0-9]+@[a-z]+\.[a-z]{2,3}/))
-})
-
 // posts validation middlewares
 
 const PostValidator = joi.object({
@@ -71,21 +76,11 @@ const PostValidator = joi.object({
     description: joi.string().min(5).max(128).required(),
 })
 
-const PostValidator4Update = joi.object({
-    title: joi.string().min(4).max(32),
-    description: joi.string().min(5).max(128)
-})
-
 // comments validation middlewares
 
 const CommentValidator = joi.object({
     post_id: joi.number().required(),
     comment_text: joi.string().min(5).max(64).required()
-})
-
-const CommentValidator4Update = joi.object({
-    post_id: joi.number(),
-    comment_text: joi.string().min(5).max(64)
 })
 
 // users validation middlewares
@@ -96,8 +91,25 @@ const UserValidation = (req, res, next) => {
 }
 
 const UserValidation4Update = (req, res, next) => {
-    const { value, error } = UserValidator4Update.validate(req.body)
-    return error ? next(error) : next()
+    let {username, password, email} = req.body
+
+    if (username || password || email) {
+        username = (username && typeof username === 'string' && username.length >= 3 && username.length <= 15) ? username : undefined
+        password = (password && typeof password === 'string' && password.length >= 3 && password.length <= 15 && /(?=.*[a-z]+)(?=.*[0-9]+)/.test(password)) ? password : undefined
+        email = (email && typeof email === 'string' && email.length >= 3 && email.length <= 15 && /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email)) ? email : undefined
+        
+        if (username || password || email) {
+            return next()
+        } else {
+            res.json({
+                message: 'wrong username or password or email'
+            })
+        }
+    } else {
+        res.status(400).json({
+            message: 'data not found please write something '
+        })
+    }
 }
 
 // posts validation middlewares
@@ -109,8 +121,24 @@ const PostValidation = (req, res, next) => {
 }
 
 const PostValidation4Update = (req, res, next) => {
-    const { value, error } = PostValidator4Update.validate(req.body)
-    return error ? next(error) : next()
+    let {title, description} = req.body
+
+    if (title.length || description.length) {
+        title = (title && typeof title === 'string' && title.length >= 4 && title.length <= 32) ? title : undefined
+        description = (description && typeof description === 'string' && description.length >= 5 && description.length <= 128 ) ? description : undefined
+        
+        if (title.length || description.length) {
+            return next()
+        } else {
+            res.json({
+                message: 'wrong title or description'
+            })
+        }
+    } else {
+        res.status(400).json({
+            message: 'data not found please write something '
+        })
+    }
 }
 
 // comments validation middlewares
@@ -121,8 +149,24 @@ const CommentValidation = () => {
 }
 
 const CommentValidation4Update = () => {
-    const { value, error } = CommentValidator4Update.validate(req.body)
-    return error ? next(error) : next()
+    let {post_id, comment_text} = req.body
+
+    if (post_id.length || comment_text.length) {
+        post_id = (post_id && typeof post_id === 'number') ? post_id : undefined
+        comment_text = (comment_text && typeof comment_text === 'string' && comment_text.length >= 5 && comment_text.length <= 64 ) ? comment_text : undefined
+        
+        if (post_id.length || comment_text.length) {
+            return next()
+        } else {
+            res.json({
+                message: 'wrong title or description'
+            })
+        }
+    } else {
+        res.status(400).json({
+            message: 'data not found please write something '
+        })
+    }
 }
 
 module.exports = {

@@ -25,7 +25,6 @@ create table comments (
   	updated_at TIMESTAMP NOT NULL
 );
 
-
 insert into users(username, password, email) values('nodir', crypt('sadfadf', gen_salt('bf')), 'sadfsad@mada.ru'),('qodir', 'sdfsdf', 'saa@jis.nb'),('shokir', 'u546y5', 'odfuo@ooaf.ijf');
 insert into posts(title, description, user_id) values('qale', 'nimasd is difafdiads naisduf ai jnid', 1),('tinch', 'odfodsfogd sodgsdu dou du aooasdo us', 2),('yaxshimi', 'ueur3r ire rerri eb eiru', 3);
 insert into comments(comment_text, post_id, user_id) values('sisa d i uais', 2, 3),('pob f ifg oin', 1, 1),('what th e f u ck', 3, 2);

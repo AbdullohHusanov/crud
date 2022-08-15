@@ -16,6 +16,12 @@ let ONE = `
     FROM users
     WHERE user_id = $1;
 `
+let onewithpassword = `
+    SELECT 
+        *
+    FROM users
+    WHERE user_id = $1;
+`
 
 let SEARCH = `
     SELECT
@@ -36,9 +42,29 @@ let DELETE = `
     RETURNING user_id;
 `
 
+let CHECK_PASSWORD = `
+    SELECT
+        CASE AS result
+            WHEN password = crypt($2, gen_salt(password))
+            THEN 'true'
+            ELSE 'false'
+        END
+    FROM users
+    WHERE user_id = $1;
+`
+
 let UPDATE = `
     UPDATE users
-    SET username = $2
+    SET username = $2,
+        password = crypt($3, gen_salt('bf')),
+        email = $4
+    WHERE user_id = $1
+    RETURNING *;
+`
+let UPDATE2 = `
+    UPDATE users
+    SET username = $2,
+        email = $3
     WHERE user_id = $1
     RETURNING *;
 `
@@ -49,6 +75,10 @@ const getUsers = () => {
 
 const getUser = (user_id) => {
     return model(ONE, user_id)
+}
+
+const getUserWithPassword = (user_id) => {
+    return model(onewithpassword, user_id)
 }
 
 const getUsersBySearch = (username) => {
@@ -63,8 +93,10 @@ const deleteUser = (user_id) => {
     return model(DELETE, user_id)
 }
 
-const updateUser = (user_id, username) => {
-    return model(UPDATE, user_id, username)
+const updateUser = (user_id, username, password, email) => {
+    console.log(user_id, username, password, email);
+
+    return password ? model(UPDATE, user_id, username, password, email) : model(UPDATE2, user_id, username, email)
 }
 
 module.exports = {
@@ -73,5 +105,6 @@ module.exports = {
     getUsersBySearch,
     createUser,
     deleteUser,
-    updateUser
+    updateUser,
+    getUserWithPassword
 }

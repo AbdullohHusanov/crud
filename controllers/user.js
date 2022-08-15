@@ -52,7 +52,7 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     let { username, password, email } = req.body
-    console.log('sdfgsdf');
+
     let newUser = await usersModel.createUser(username, password, email)
 
     let userToken = jwt.sign({
@@ -97,18 +97,17 @@ const updateUser = async (req, res) => {
     let { token } = req.headers
 
     let { user_id } = jwt.verify(token, process.env.SECRET_KEY_4JWT)
-    let user = await usersModel.getUser(userId)
+    let user = await usersModel.getUserWithPassword(userId)
     
     if((user.length && user_id) && userId == user_id) {
 
         username = username ? username : user[0].username
-        password = password ? password : user[0].password
         email = email ? email : user[0].email
-        
-        let updatedUser = await usersModel.updateUser(user_id, username, password, email)
-    
+       
+        let updatedUser = await usersModel.updateUser(user_id, username, password, email) 
+        console.log(updatedUser);
         res.json({
-            message: 'Post succesfully updated',
+            message: 'User succesfully updated',
             data: updatedUser
         })
     } else {

@@ -59,8 +59,8 @@ let DELETE = `
 
 let UPDATE = `
     UPDATE comments
-        SET post_id = $2
-        SET comment_text = $3
+        SET post_id = $2,
+            comment_text = $3
     WHERE comment_id = $1
     RETURNING *;
 `
