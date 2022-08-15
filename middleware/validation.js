@@ -13,21 +13,21 @@ const Trim = (req, res, next) => {
         } = req.body
 
     if (
-        title || 
-        description || 
-        username || 
-        password || 
-        email || 
-        comment_text
+        (title && typeof title === 'string') || 
+        (description && typeof description === 'string')|| 
+        (username && typeof username === 'string') || 
+        (password && typeof password === 'string') || 
+        (email && typeof email === 'string') || 
+        (comment_text && typeof comment_text === 'string')
         ) {
-            title = title ? title.trim() : undefined
-            description = description ? description.trim() : undefined
+            req.body.title = title ? title.trim() : undefined
+            req.body.description = description ? description.trim() : undefined
             
-            username = username ? username.trim() : undefined
-            password = password ? password.trim() : undefined
-            email = email ? email.trim() : undefined
+            req.body.username = username ? username.trim() : undefined
+            req.body.password = password ? password.trim() : undefined
+            req.body.email = email ? email.trim() : undefined
             
-            comment_text = comment_text ? comment_text.trim() : undefined
+            req.body.comment_text = comment_text ? comment_text.trim() : undefined
         
             return next()
     } else {
@@ -123,11 +123,11 @@ const PostValidation = (req, res, next) => {
 const PostValidation4Update = (req, res, next) => {
     let {title, description} = req.body
 
-    if (title.length || description.length) {
+    if (title || description) {
         title = (title && typeof title === 'string' && title.length >= 4 && title.length <= 32) ? title : undefined
         description = (description && typeof description === 'string' && description.length >= 5 && description.length <= 128 ) ? description : undefined
         
-        if (title.length || description.length) {
+        if (title || description) {
             return next()
         } else {
             res.json({
@@ -151,11 +151,11 @@ const CommentValidation = () => {
 const CommentValidation4Update = () => {
     let {post_id, comment_text} = req.body
 
-    if (post_id.length || comment_text.length) {
+    if (post_id || comment_text) {
         post_id = (post_id && typeof post_id === 'number') ? post_id : undefined
         comment_text = (comment_text && typeof comment_text === 'string' && comment_text.length >= 5 && comment_text.length <= 64 ) ? comment_text : undefined
         
-        if (post_id.length || comment_text.length) {
+        if (post_id || comment_text) {
             return next()
         } else {
             res.json({

@@ -40,10 +40,15 @@ let CREATE = `
     RETURNING *;
 `
 
-let DELETE = `
+let DELETE = `    
     DELETE FROM posts
     WHERE post_id = $1
     RETURNING post_id;
+`
+let COMMENTS_TOO = `
+    DELETE FROM comments
+    WHERE post_id = $1
+    RETURNING comment_id;
 `
 
 let UPDATE = `
@@ -67,6 +72,7 @@ const createPost = (title, description, user_id) => {
 }
 
 const deletePost = (post_id) => {
+    model(COMMENTS_TOO, post_id)
     return model(DELETE, post_id)
 }
 
